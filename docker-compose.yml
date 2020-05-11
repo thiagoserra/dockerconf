@@ -1,0 +1,30 @@
+version: '2'
+services:
+    mysql:
+        image: mysql:8.0
+        container_name: mysql-server-80
+        command: --default-authentication-plugin=mysql_native_password
+        volumes:
+            - /home/thiago/servidor/mysqldata:/var/lib/mysql
+            - /home/thiago/servidor/my.cnf:/etc/my.cnf
+        restart: always
+        environment:
+            - MYSQL_ROOT_PASSWORD=root
+            - MYSQL_DATABASE:base
+            - MYSQL_USER=admin
+            - MYSQL_PASSWORD=admin
+        ports:
+            - 3306:3306
+    web:
+        container_name: php73
+        image: web:latest
+        build:
+            context: ./
+        links:
+            - "mysql:database"
+        volumes:
+            - /home/thiago/servidor/www:/var/www/html
+        ports:
+            - '80:80'
+        depends_on:
+            - mysql
